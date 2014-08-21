@@ -53,17 +53,22 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	@Override
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
+		String cmd;
 
 		if (predictions.size() > 0 && predictions.get(0).score > 1.0) {
 			String result = predictions.get(0).name;
 
 			if ("open".equalsIgnoreCase(result)) {
-				Toast.makeText(this, "Opening the document", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Gesture 'O' -> opening text editor", Toast.LENGTH_LONG).show();
 				//call send Data
-				tcpClient.sendDataToDevice("mate");
+				tcpClient.sendDataToDevice("msg:opening text editor");
+				cmd = "mate";
+				tcpClient.sendDataToDevice(cmd);
 			} else if ("save".equalsIgnoreCase(result)) {
-				Toast.makeText(this, "Saving the document", Toast.LENGTH_LONG).show();
-				tcpClient.sendDataToDevice("save");
+				Toast.makeText(this, "Gesture 'S' -> new email", Toast.LENGTH_LONG).show();
+				tcpClient.sendDataToDevice("msg:new email");
+				cmd = "open mailto:abc@yahoo.com";
+				tcpClient.sendDataToDevice(cmd);
 			}
 		}
 	}
@@ -86,7 +91,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				socket = new Socket(serverAddr, 9876);
 				try{
 					out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-					out.println("Hey Server!");
+					out.println("msg:Hey Server!");
 					Log.d("ClientActivity", "C: Sent.");
 				} catch (Exception e) {
 					Log.e("ClientActivity", "S: Error", e);

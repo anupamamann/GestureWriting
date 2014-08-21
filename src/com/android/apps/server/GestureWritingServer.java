@@ -35,11 +35,14 @@ public class GestureWritingServer {
 			if (str.equals("bye")) {
 				pw.println("bye");
 				break;
-			} else if (!str.trim().contains("Hey")) {
+			} else if (!str.trim().startsWith("msg:")) {
 				// time to do some action
-				List<String> command = new ArrayList<String>();
-				command.add(str.trim());
-				ProcessBuilder builder = new ProcessBuilder(command);
+				List<String> commands = new ArrayList<String>();
+				String[] cmdArgs = str.trim().split(" ");
+				for (String cmdArg : cmdArgs) {
+					commands.add(cmdArg);
+				}
+				ProcessBuilder builder = new ProcessBuilder(commands);
 
 				Process process = null;
 				try {
