@@ -27,7 +27,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	GestureLibrary mLibrary;
 	AsynNetworkClient tcpClient;
 
-	private String serverIpAddress = "10.73.212.112";
+	private String serverIpAddress = "10.73.221.110";
 	PrintWriter out;
 	private boolean isConnected = false;
 	Context context=null;
@@ -60,7 +60,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			if ("open".equalsIgnoreCase(result)) {
 				Toast.makeText(this, "Opening the document", Toast.LENGTH_LONG).show();
 				//call send Data
-				tcpClient.sendDataToDevice("open");
+				tcpClient.sendDataToDevice("mate");
 			} else if ("save".equalsIgnoreCase(result)) {
 				Toast.makeText(this, "Saving the document", Toast.LENGTH_LONG).show();
 				tcpClient.sendDataToDevice("save");
@@ -120,7 +120,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 		protected boolean sendDataToDevice(String cmd){
 
 			 if ( isConnected ) 
-				 out.println(cmd +";");
+				 out.println(cmd);
 			 else{
 				 Log.e("Connection:", "Connection Lost....");
 				 //Notify app, re-initiate connection
