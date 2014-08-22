@@ -8,7 +8,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.gesture.Gesture;
@@ -27,7 +26,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	GestureLibrary mLibrary;
 	AsynNetworkClient tcpClient;
 
-	private String serverIpAddress = "10.73.221.110";
+	private String serverIpAddress = "10.87.3.54";
 	PrintWriter out;
 	private boolean isConnected = false;
 	Context context=null;
@@ -45,6 +44,30 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 
 		GestureOverlayView gestures = (GestureOverlayView) findViewById(R.id.gestures);
 		gestures.addOnGesturePerformedListener(this);
+		
+		//standard swipe gestures
+		gestures.setOnTouchListener(new OnSwipeTouchListener(this) {
+			@Override
+			public void onSwipeLeft() {
+				Toast.makeText(GestureActivity.this, "Swipe left", Toast.LENGTH_LONG).show();
+			}
+			@Override
+			public void onSwipeRight() {
+				Toast.makeText(GestureActivity.this, "Swipe right", Toast.LENGTH_LONG).show();
+			}
+			@Override
+			public void onDTap() {
+				Toast.makeText(GestureActivity.this, "Double tap", Toast.LENGTH_LONG).show();
+			}
+			@Override
+			public void onSwipeUp() {
+				tcpClient.sendDataToDevice("key:up");
+			}
+			@Override
+			public void onSwipeDown() {
+				tcpClient.sendDataToDevice("key:down");
+			}
+		});
 		//start connection 
 		tcpClient = new AsynNetworkClient();
 		tcpClient.execute(serverIpAddress);
@@ -69,6 +92,16 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				tcpClient.sendDataToDevice("msg:new email");
 				cmd = "open mailto:abc@yahoo.com";
 				tcpClient.sendDataToDevice(cmd);
+			} else if ("next line".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "Gesture 'next line'", Toast.LENGTH_LONG).show();
+				tcpClient.sendDataToDevice("msg:next line");
+				//cmd = "open mailto:abc@yahoo.com";
+				//tcpClient.sendDataToDevice(cmd);
+			} else if ("prev line".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "Gesture 'prev line'", Toast.LENGTH_LONG).show();
+				tcpClient.sendDataToDevice("msg:prev line");
+				//cmd = "open mailto:abc@yahoo.com";
+				//tcpClient.sendDataToDevice(cmd);
 			}
 		}
 	}
