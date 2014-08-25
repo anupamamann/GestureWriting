@@ -1,42 +1,90 @@
 package com.android.apps.server;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+//import android.view.KeyEvent;
 
-public class GestureWritingServer {
+public class GestureWritingServer{
 
-	public static void main(String args[]) throws IOException,
+	
+	
+	public static void main(String args[])  throws IOException,
 			ClassNotFoundException {
 		System.setProperty("java.awt.headless", "false");
 		int cTosPortNumber = 9876;
-		String str;
-
+		String str = null;
+	
 		ServerSocket servSocket = new ServerSocket(cTosPortNumber);
 		System.out.println("Waiting for a connection on " + cTosPortNumber);
 
-		Socket fromClientSocket = servSocket.accept();
-		PrintWriter pw = new PrintWriter(fromClientSocket.getOutputStream(),
-				true);
+//		ObjectOutputStream toClient=null; 
+	//	ObjectInputStream fromClient = null;
+		
+		DataInputStream dis = null;
+		DataOutputStream dos = null;
+		
+		String message="";		
+		while(true){
+			
+			Socket fromClientSocket = servSocket.accept();
+			 dis = new DataInputStream(fromClientSocket.getInputStream());
+			try{
+				
+				byte[] bArray = new byte[2000];
+				dis.readFully(bArray);
+				//fromClientSocket.getInputStream().read(bArray);
+				//ByteArrayInputStream bis = new ByteArrayInputStream(bArray);
+				//fromClient = new ObjectInputStream(bis);
+				if(bArray != null)
+					System.out.println("Received Object");
+				dos = new DataOutputStream(fromClientSocket.getOutputStream());
+				dos.write(bArray);
+				//toClient = new ObjectOutputStream(bos);
+				//fromClientSocket.getOutputStream());
+				/*Object obj = fromClient.readObject();
+				if(obj != null){
+					System.out.println("Object not null");
+				}
+				toClient.writeObject(obj);*/
+			//	String message = (String)fromClient.readObject();
+				if(message == "bye"){
+					break;
+				}
+			
+			}catch(Exception ex){
+				ex.printStackTrace();
+				if(dos !=null)
+					dos.close();
+				if(dis != null)
+					dis.close();
+			}
+		}
+		dos.close();
+		dis.close();
+		
+		servSocket.close();
+		
+	}
+	
+	
+		/*	
+		PrintWriter pw = new PrintWriter(fromClientSocket.getOutputStream(),true);
 		
 		Process process = null;
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				fromClientSocket.getInputStream()));
-
+		BufferedReader br = new BufferedReader(new InputStreamReader(fromClientSocket.getInputStream()));
+		 
 		while ((str = br.readLine()) != null) {
-
+		
+		
+		
 			if (str.equals("bye")) {
 				pw.println("bye");
 				break;
@@ -96,6 +144,8 @@ public class GestureWritingServer {
 
 		fromClientSocket.close();
 		servSocket.close();
-	}
+		
+	} */
 
+	
 }

@@ -1,13 +1,21 @@
 package com.android.apps.mydrawing;
 
-import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+
+import org.apache.commons.lang.SerializationUtils;
+
 import android.app.Activity;
 import android.content.Context;
 import android.gesture.Gesture;
@@ -26,10 +34,14 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	GestureLibrary mLibrary;
 	AsynNetworkClient tcpClient;
 
-	private String serverIpAddress = "10.87.3.54";
+	private String serverIpAddress = "10.73.212.112";
 	PrintWriter out;
+	ObjectOutputStream oos;
+	//ObjectInputStream ois = null;
 	private boolean isConnected = false;
 	Context context=null;
+	DataOutputStream dos = null;
+	DataInputStream dis = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,9 +135,22 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				Log.d("ClientActivity", "C: Connecting...");
 				socket = new Socket(serverAddr, 9876);
 				try{
-					out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-					out.println("msg:Hey Server!");
+					
+					
+					dos = new DataOutputStream(socket.getOutputStream());
+					//out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+					//out.println("msg:Hey Server!");
+					PaintObject po = new PaintObject("testObject");
+				//	 SerializationUtils.serialize(po);
+					dos.write(SerializationUtils.serialize(po));
+					
+					dis = new DataInputStream(socket.getInputStream());
+					byte[] bArray = new byte[2000];
+					dis.readFully(bArray);
+					PaintObject rcvdPO = (PaintObject)SerializationUtils.deserialize(bArray);
+					Log.d("Received Object:" , rcvdPO.toString());
 					Log.d("ClientActivity", "C: Sent.");
+				
 				} catch (Exception e) {
 					Log.e("ClientActivity", "S: Error", e);
 				}
