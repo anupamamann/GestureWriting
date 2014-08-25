@@ -1,12 +1,8 @@
 package com.android.apps.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 //import android.view.KeyEvent;
@@ -36,15 +32,20 @@ public class GestureWritingServer{
 			Socket fromClientSocket = servSocket.accept();
 			 dis = new DataInputStream(fromClientSocket.getInputStream());
 			try{
-				
-				byte[] bArray = new byte[2000];
-				dis.readFully(bArray);
+				int length = dis.readInt();
+				byte[] bArray = new byte[length];
+				dis.readFully(bArray, 0, length);
+				System.out.println("Received Object");
 				//fromClientSocket.getInputStream().read(bArray);
 				//ByteArrayInputStream bis = new ByteArrayInputStream(bArray);
 				//fromClient = new ObjectInputStream(bis);
-				if(bArray != null)
-					System.out.println("Received Object");
+				//	String msg = new String(bArray);
+					//System.out.println("Received Data:" + msg);
+				
+				//String msg = "Hey";
+				//byte[] mArray = msg.getBytes();
 				dos = new DataOutputStream(fromClientSocket.getOutputStream());
+				dos.writeInt(bArray.length);
 				dos.write(bArray);
 				//toClient = new ObjectOutputStream(bos);
 				//fromClientSocket.getOutputStream());

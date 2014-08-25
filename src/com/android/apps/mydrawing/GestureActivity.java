@@ -1,12 +1,8 @@
 package com.android.apps.mydrawing;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -135,20 +131,32 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				Log.d("ClientActivity", "C: Connecting...");
 				socket = new Socket(serverAddr, 9876);
 				try{
-					
-					
 					dos = new DataOutputStream(socket.getOutputStream());
 					//out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 					//out.println("msg:Hey Server!");
 					PaintObject po = new PaintObject("testObject");
-				//	 SerializationUtils.serialize(po);
-					dos.write(SerializationUtils.serialize(po));
+					byte[] mArray = SerializationUtils.serialize(po);
+				//	String msg = "Hey";
+					//byte[] mArray = msg.getBytes();
+					dos.writeInt(mArray.length);
+					dos.write(mArray);
+					dos.flush();
 					
 					dis = new DataInputStream(socket.getInputStream());
-					byte[] bArray = new byte[2000];
-					dis.readFully(bArray);
+					int length = dis.readInt();
+					byte[] bArray = new byte[length];
+					if(length>0) {
+						
+					    dis.readFully(bArray, 0, bArray.length); // read the message
+					}
+					
+					
+					
 					PaintObject rcvdPO = (PaintObject)SerializationUtils.deserialize(bArray);
-					Log.d("Received Object:" , rcvdPO.toString());
+					//Log.d("Received Object:" , rcvdPO.toString());
+					//String rcvdMessage = new String(bArray);
+					showToast("Received Messages:"+ rcvdPO.toString());
+					//Log.d("Received Messages:", rcvdMessage);
 					Log.d("ClientActivity", "C: Sent.");
 				
 				} catch (Exception e) {
