@@ -8,10 +8,13 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.gesture.GestureLibrary;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path.Direction;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.android.apps.mydrawing.PaintObject.PathObject;
 
@@ -61,7 +64,6 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 				MySerializablePath firstPath = null;
 				firstPath = (MySerializablePath) paths.get(0).getPath();
 				if (firstPath != null) {
-					firstPath.addCircle(200, 300, 20, Direction.CCW);
 					drawingBoard.addToPaths(firstPath);
 				}
 			}
@@ -72,19 +74,45 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 	public void shakingStarted() {
 	//send signal to connected devices
 		PaintObject po = new PaintObject("shake");
-		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
+		saveAndRedraw();
+		Toast.makeText(this, "SHAKING START", Toast.LENGTH_SHORT).show();
+		//new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
 		
 	}
 
 	@Override
-	public void shakingStopped() {
-		
+	public void shakingStopped() {		
+		Toast.makeText(this, "SHAKING STOP ", Toast.LENGTH_SHORT).show();
+		saveAndRedraw();
 	}
 	
 	public void saveAndRedraw(){
 		drawingBoard.clearCanvas();
 	}
+	
+	public void onBlack(View v) {
+		drawingBoard.setColor(Color.BLACK);
+	}
 
+	public void onRed(View v) {
+		drawingBoard.setColor(Color.RED);
+	}
+
+	public void onGreen(View v) {
+		drawingBoard.setColor(Color.GREEN);
+	}
+
+	public void onBlue(View v) {
+		drawingBoard.setColor(Color.BLUE);
+	}
+
+	public void onYellow(View v) {
+		drawingBoard.setColor(Color.YELLOW);
+	}
+
+	public void onWhite(View v) {
+		drawingBoard.setColor(Color.WHITE);
+	}
 	
 }
 

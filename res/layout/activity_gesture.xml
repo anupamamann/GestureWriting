@@ -23,6 +23,60 @@ android:orientation="vertical" >
     android:layout_alignParentLeft="true"
     android:layout_alignParentRight="true"
     android:layout_alignParentTop="true" />
+
+<ImageButton
+        android:id="@+id/btnBlack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="30dp"
+        android:src="@drawable/black"
+        android:onClick="onBlack" />
+
+    <ImageButton
+        android:id="@+id/btnRed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnBlack"
+        android:src="@drawable/red"
+        android:onClick="onRed" />
+
+    <ImageButton
+        android:id="@+id/btnGreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnRed"
+        android:src="@drawable/green"
+        android:onClick="onGreen" />
+
+    <ImageButton
+        android:id="@+id/btnBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnGreen"
+        android:src="@drawable/blue"
+        android:onClick="onBlue" />
+
+    <ImageButton
+        android:id="@+id/btnYellow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnBlue"
+        android:src="@drawable/yellow"
+        android:onClick="onYellow" />
+
+    <ImageButton
+        android:id="@+id/btnWhite"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnYellow"
+        android:src="@drawable/white"
+        android:onClick="onWhite" />
     
   
     </RelativeLayout>
