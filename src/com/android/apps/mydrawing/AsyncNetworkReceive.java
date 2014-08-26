@@ -81,8 +81,8 @@ public class AsyncNetworkReceive extends AsyncTask<String, Void,Boolean>{
 			try {
 				if (dis != null)
 					dis.close();
-				if (socket != null)
-					socket.close();
+				if (this.socket != null)
+					this.socket.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
