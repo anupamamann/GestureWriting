@@ -2,6 +2,7 @@ package com.android.apps.mydrawing;
 
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.List;
 
 import android.app.Activity;
@@ -10,15 +11,16 @@ import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.graphics.Paint;
 import android.graphics.Path.Direction;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.android.apps.mydrawing.PaintObject.PathObject;
 
 public class GestureActivity extends Activity {
 	GestureLibrary mLibrary;
-	AsyncNetworkClient tcpClient;
+	Socket socket;
 
-	private String serverIpAddress = "10.73.221.110";
+	private String serverIpAddress = "10.73.212.112";
 	PrintWriter out;
 	ObjectOutputStream oos;
 	Context context=null;
@@ -30,10 +32,13 @@ public class GestureActivity extends Activity {
 		setContentView(R.layout.activity_gesture);
 		
 		context = getApplicationContext();
-		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
+		/*mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
 		if (!mLibrary.load()) {
 			finish();
-		}
+		}*/
+		
+		new AsyncNetworkReceive(this).executeOnExecutor(
+				AsyncTask.THREAD_POOL_EXECUTOR, serverIpAddress);
 		
 		drawingBoard = (DrawingCanvas) findViewById(R.id.drawingCanvas1);
 		drawingBoard.setActivity(this);
@@ -66,22 +71,27 @@ public class GestureActivity extends Activity {
 		});   */
 	}
 	
-	public void sendDrawing(Paint paint, boolean init) {
-		if (!init) {
-			PaintObject po = new PaintObject("test", drawingBoard.getPaths());
-			// execute fresh async task
-			new AsyncNetworkClient(this, po).execute(serverIpAddress);
-		}
+	public void setSocket(Socket socket){
+		this.socket = socket;
 	}
 	
+	public void sendDrawing(Paint paint) {
+		PaintObject po = new PaintObject("MONA-Test", drawingBoard.getPaths());
+		// execute fresh async task
+		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
+	}
+
 	public void drawReceived(PaintObject po) {
-		List<PathObject> paths = po.getPaths();
-		//temp tweak for testing
-		MySerializablePath firstPath = null;
-		firstPath = (MySerializablePath) paths.get(0).getPath();
-		firstPath.addCircle(200, 300, 10, Direction.CCW);
-		drawingBoard.addToPaths(firstPath);
-		
+		if (po != null) {
+			List<PathObject> paths = po.getPaths();
+			// temp tweak for testing
+			MySerializablePath firstPath = null;
+			firstPath = (MySerializablePath) paths.get(0).getPath();
+			if (firstPath != null) {
+			firstPath.addCircle(200, 300, 20, Direction.CCW);
+			drawingBoard.addToPaths(firstPath);
+			}
+		}
 	}
 
 	/*@Override
@@ -115,16 +125,6 @@ public class GestureActivity extends Activity {
 				//tcpClient.sendDataToDevice(cmd);
 			}
 		}
-	}*/
-	
-	/*private void showToast(final String message) {
-	    new Handler(context.getMainLooper()).post(new Runnable() {
-
-	        @Override
-	        public void run() {
-	            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-	        }
-	    });
 	}*/
 
 }

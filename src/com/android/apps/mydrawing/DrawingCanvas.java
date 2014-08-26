@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +26,7 @@ public class DrawingCanvas extends View {
 	int brushSize = BRUSH_SIZE.MEDIUM.get();
 	Bitmap bitmap;
 	//Canvas newCanvas;
-	Activity activity;
+	Activity activity = null;
 	boolean isBlank = true;
 	
 	enum BRUSH_SIZE {
@@ -96,15 +97,13 @@ public class DrawingCanvas extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		//newCanvas.setBitmap(bitmap);
 		for (Pair<MySerializablePath, Pair<Integer, Integer>> path : paths) {
 			Pair<Integer, Integer> values = path.second;
 			paint.setStrokeWidth(values.first);
 			paint.setColor(values.second);
 			canvas.drawPath(path.first, paint);
-			//newCanvas.drawMySerializablePath(path.first, paint);
 		}
-		((GestureActivity)activity).sendDrawing(paint, isBlank);
+		
 	}
 	
 	@Override
@@ -147,8 +146,12 @@ public class DrawingCanvas extends View {
 			postInvalidate();
 			return true;
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
-			isBlank = false;
-			postInvalidate();
+			if (activity == null) {
+				Log.e("Drawing", "activity is null");
+			}
+			else {
+			((GestureActivity)activity).sendDrawing(paint);
+			}
 			return true;
 		}
 		return false;

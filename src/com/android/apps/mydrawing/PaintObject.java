@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.util.Pair;
 
-
 /**
  * Serialized Class for transferring Path object for a canvas drawing over the network
  *
@@ -47,6 +46,10 @@ public class PaintObject implements Serializable {
 			PathObject temp = new PathObject(path.first, path.second.first, path.second.second);
 			pathO.add(temp);
 		}
+	}
+	
+	public PaintObject (String desc) {
+		this.description = desc;
 	}
 
 	public String getDescription() {
