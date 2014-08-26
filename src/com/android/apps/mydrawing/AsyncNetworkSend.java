@@ -24,6 +24,7 @@ public class AsyncNetworkSend extends AsyncTask<String, Void, Boolean> {
 		this.po = po;
 	}
 
+	
 	@Override
 	protected void onPreExecute() {
 		// TODO Auto-generated method stub
