@@ -1,5 +1,6 @@
 package com.android.apps.mydrawing;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -10,7 +11,6 @@ import android.content.Context;
 import android.gesture.GestureLibrary;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path.Direction;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -77,7 +77,6 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 		saveAndRedraw();
 		Toast.makeText(this, "SHAKING START", Toast.LENGTH_SHORT).show();
 		//new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
-		
 	}
 
 	@Override
@@ -114,5 +113,19 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 		drawingBoard.setColor(Color.WHITE);
 	}
 	
+	@Override
+	protected void onDestroy() {
+		if(this.socket!=null){
+			
+			try {
+				this.socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		super.onDestroy();
+	}
 }
 
