@@ -27,7 +27,6 @@ public class DrawingCanvas extends View {
 	Bitmap bitmap;
 	//Canvas newCanvas;
 	Activity activity = null;
-	boolean isBlank = true;
 	
 	enum BRUSH_SIZE {
 		SMALL(10),
@@ -123,6 +122,7 @@ public class DrawingCanvas extends View {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		MySerializablePath p = null;
 		boolean change = false;
 		if (color != paint.getColor()) {
 			paint.setColor(color);
@@ -133,9 +133,9 @@ public class DrawingCanvas extends View {
 			change = true;
 		}
 		if (change) {
-			MySerializablePath p = new MySerializablePath();
+			p = new MySerializablePath();
 			currentPath = p;
-			paths.add(Pair.create(currentPath, Pair.create(brushSize, color)));
+			paths.add(Pair.create(p, Pair.create(brushSize, color)));
 		}
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			currentPath.moveTo(event.getX(), event.getY());
@@ -150,7 +150,7 @@ public class DrawingCanvas extends View {
 				Log.e("Drawing", "activity is null");
 			}
 			else {
-			((GestureActivity)activity).sendDrawing(paint);
+			((GestureActivity)activity).sendDrawing();
 			}
 			return true;
 		}
@@ -166,7 +166,6 @@ public class DrawingCanvas extends View {
 		currentPath = new MySerializablePath();
 		paths = new ArrayList<Pair<MySerializablePath, Pair<Integer, Integer>>>();
 		paths.add(Pair.create(currentPath, Pair.create(brushSize, color)));
-		isBlank = true;
 		invalidate();
 	}
 	

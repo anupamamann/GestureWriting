@@ -48,8 +48,8 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 		this.socket = socket;
 	}
 	
-	public void sendDrawing(Paint paint) {
-		PaintObject po = new PaintObject("DrawConnect-Test", drawingBoard.getPaths());
+	public void sendDrawing() {
+		PaintObject po = new PaintObject("DrawConnect-Test ", drawingBoard.getPaths());
 		// execute fresh async task
 		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
 	}
