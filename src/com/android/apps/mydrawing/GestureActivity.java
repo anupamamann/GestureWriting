@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Path.Direction;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.android.apps.mydrawing.PaintObject.PathObject;
 
@@ -72,14 +73,16 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 	@Override
 	public void shakingStarted() {
 	//send signal to connected devices
+		Toast.makeText(GestureActivity.this, "shake", Toast.LENGTH_LONG).show();
 		PaintObject po = new PaintObject("shake");
 		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
 		
-		
 	}
 
+	
 	@Override
 	public void shakingStopped() {
+		Toast.makeText(GestureActivity.this, "redrawing", Toast.LENGTH_LONG).show();
 		saveAndRedraw();
 	}
 	
