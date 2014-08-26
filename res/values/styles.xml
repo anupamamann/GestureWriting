@@ -20,5 +20,10 @@
     <style name="CanvasBorder">
         <item name="android:background">@drawable/canvas_border</item>
     </style>
+    
+    <style name="NiceButton">
+        <item name="android:background">@drawable/nice_button</item>
+    </style>
+    
 
 </resources>

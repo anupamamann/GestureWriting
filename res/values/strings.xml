@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">myDrawing</string>
+    <string name="app_name">DrawConnect</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_gesture">GestureActivity</string>
     <string name="title_activity_client">ClientActivity</string>
+    <string name="title_activity_start">StartActivity</string>
 
 </resources>

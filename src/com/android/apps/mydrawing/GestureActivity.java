@@ -76,7 +76,7 @@ public class GestureActivity extends Activity {
 	}
 	
 	public void sendDrawing(Paint paint) {
-		PaintObject po = new PaintObject("MONA-Test", drawingBoard.getPaths());
+		PaintObject po = new PaintObject("DrawConnect-Test", drawingBoard.getPaths());
 		// execute fresh async task
 		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
 	}
