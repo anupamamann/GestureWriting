@@ -26,13 +26,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-public class GestureActivity extends Activity implements OnGesturePerformedListener{
+public class GestureActivityCombined extends Activity implements OnGesturePerformedListener{
 	GestureLibrary mLibrary;
 	AsynNetworkClient connectToServer;
 	AsynNetworkSend sendToServer;
 	Socket socket = null;
 
-	private String serverIpAddress = "10.73.216.85";
+	private String serverIpAddress = "10.73.212.112";
 	PrintWriter out;
 	ObjectOutputStream oos;
 	//ObjectInputStream ois = null;
@@ -45,18 +45,19 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gesture);
+		context = getApplicationContext();
 		connectToServer = new AsynNetworkClient(this);
 		connectToServer.execute(serverIpAddress);
 	
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		sendDrawing();
-		context = getApplicationContext();
+		
 		/*mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
 		if (!mLibrary.load()) {
 			finish();
@@ -100,7 +101,8 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	}
 
 	public void sendDrawing(){
-		new AsynNetworkSend(socket).execute();
+		sendToServer = new AsynNetworkSend(socket);
+		sendToServer.execute();
 	}
 
 	@Override
@@ -138,15 +140,15 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 
 	private class AsynNetworkClient extends AsyncTask<String, Void,Boolean>{
 
-		GestureActivity parentActivity =null;
+		GestureActivityCombined parentActivity =null;
 
 		public AsynNetworkClient(Activity a) {
-			this.parentActivity = (GestureActivity)a;
+			this.parentActivity = (GestureActivityCombined)a;
 		}
 
 		@Override
 		protected void onPreExecute() {
-			Toast.makeText(GestureActivity.this,"Starting Connection", Toast.LENGTH_LONG).show();
+			Toast.makeText(GestureActivityCombined.this,"Starting Connection", Toast.LENGTH_LONG).show();
 			super.onPreExecute();
 		}
 
@@ -200,7 +202,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (isConnected) {
-				Toast.makeText(GestureActivity.this,"Connection successfull", Toast.LENGTH_LONG).show();
+				Toast.makeText(GestureActivityCombined.this,"Connection successfull", Toast.LENGTH_LONG).show();
 			}        
 			super.onPostExecute(result);
 		}
@@ -217,7 +219,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 					socket.close();
 					isConnected = false;
 				} catch (IOException e) {
-					Toast.makeText(GestureActivity.this, "Couldn't get I/O for the connection",Toast.LENGTH_LONG).show();
+					Toast.makeText(GestureActivityCombined.this, "Couldn't get I/O for the connection",Toast.LENGTH_LONG).show();
 					Log.e("Error", e.getMessage());
 				}            
 			}
@@ -243,19 +245,20 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 		}
 		@Override
 		protected Boolean doInBackground(String... params) {
+			showToast("Trying to send data");
 			return send();
 			
 		}
 
 		//method to send data to connected device
 		protected boolean send(){
-
+			showToast("send data");
 			if ( socket != null ){
 				try{
 					dos = new DataOutputStream(socket.getOutputStream());
 					//out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 					//out.println("msg:Hey Server!");
-					PaintObject po = new PaintObject("testObject");
+					PaintObject po = new PaintObject("testObject ");
 					byte[] mArray = SerializationUtils.serialize(po);
 					//	String msg = "Hey";
 					//byte[] mArray = msg.getBytes();
@@ -278,6 +281,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				}
 			}else{
 				Log.e("Socket Error:", "Null Socket");
+				showToast("Null Socket");
 			}
 
 			return true;	
