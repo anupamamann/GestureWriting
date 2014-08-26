@@ -100,11 +100,8 @@ public class MultiThreadedServer implements Runnable{
 
 		@Override
 		public void run() {
-
-
 			InputStream input  = null;
 			DataInputStream dis = null;
-			
 			DataOutputStream dos = null;
 
 			try {
@@ -134,6 +131,8 @@ public class MultiThreadedServer implements Runnable{
 				//report exception somewhere.
 				e.printStackTrace();
 			}finally{
+				System.out.println("removing socket");
+				removeSocket(clientSocket);
 				try{
 				if(input!=null)
 					input.close();
@@ -141,10 +140,14 @@ public class MultiThreadedServer implements Runnable{
 					dis.close();
 				if(dos!=null)
 					dos.close();
+				if(clientSocket !=null)
+					clientSocket.close();
+			
 				}catch(IOException ex){
 					System.out.println("Exception in close");
 					ex.printStackTrace();
 				}
+				
 				
 			}
 

@@ -28,18 +28,17 @@ import android.widget.Toast;
 
 public class GestureActivityCombined extends Activity implements OnGesturePerformedListener{
 	GestureLibrary mLibrary;
-	AsynNetworkClient connectToServer;
-	AsynNetworkSend sendToServer;
+	AsynNetworkClient connectToServer = null;
+	AsynNetworkSend sendToServer = null;
 	Socket socket = null;
 
 	private String serverIpAddress = "10.73.212.112";
-	PrintWriter out;
-	ObjectOutputStream oos;
+	//PrintWriter out;
+	//ObjectOutputStream oos;
 	//ObjectInputStream ois = null;
 	private boolean isConnected = false;
 	Context context=null;
-	DataOutputStream dos = null;
-	DataInputStream dis = null;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +46,10 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 		setContentView(R.layout.activity_gesture);
 		context = getApplicationContext();
 		connectToServer = new AsynNetworkClient(this);
-		connectToServer.execute(serverIpAddress);
+		connectToServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, serverIpAddress);
 	
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,7 +101,7 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 
 	public void sendDrawing(){
 		sendToServer = new AsynNetworkSend(socket);
-		sendToServer.execute();
+		sendToServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"some data");
 	}
 
 	@Override
@@ -141,6 +140,8 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 	private class AsynNetworkClient extends AsyncTask<String, Void,Boolean>{
 
 		GestureActivityCombined parentActivity =null;
+		
+		DataInputStream dis = null;
 
 		public AsynNetworkClient(Activity a) {
 			this.parentActivity = (GestureActivityCombined)a;
@@ -162,7 +163,6 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 				socket = new Socket(serverAddr, 9002);
 
 				try{
-
 					parentActivity.setSocket(socket);
 					showToast("Waiting for a msg");
 					dis = new DataInputStream(socket.getInputStream());
@@ -178,7 +178,7 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 								showToast("no message");
 							}
 						}else{
-							System.out.println("listening");
+							//System.out.println("listening");
 						}
 					}
 				} catch (Exception e) {
@@ -192,8 +192,21 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 				//showToast("Couldn't get I/O for the connection to: ");
 				Log.e("", e.getMessage());
 			}catch (Exception e) {
+			
 				//showToast(GestureActivity.this, "Exception: ");
 				Log.e("", e.getMessage());
+			}finally{
+				showToast("Came to Finally");
+					try {
+					if(dis!=null)
+						dis.close();
+					if(socket!=null)
+						socket.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 			isConnected = true;
 			return isConnected;
@@ -206,25 +219,7 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 			}        
 			super.onPostExecute(result);
 		}
-
-
-
-		//
-		public void disconnect()
-		{
-			if ( isConnected )
-			{
-				try {
-					out.close();
-					socket.close();
-					isConnected = false;
-				} catch (IOException e) {
-					Toast.makeText(GestureActivityCombined.this, "Couldn't get I/O for the connection",Toast.LENGTH_LONG).show();
-					Log.e("Error", e.getMessage());
-				}            
-			}
-		}
-
+		
 		private void showToast(final String message) {
 			new Handler(context.getMainLooper()).post(new Runnable() {
 
@@ -240,9 +235,25 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 
 		DataOutputStream dos = null;
 		Socket socket = null;
+	
 		public AsynNetworkSend(Socket socket){
 			this.socket = socket;
 		}
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			showToast("pre sending");
+			super.onPreExecute();
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			showToast("post sending");
+			super.onPostExecute(result);
+		}
+		
 		@Override
 		protected Boolean doInBackground(String... params) {
 			showToast("Trying to send data");
@@ -252,7 +263,7 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 
 		//method to send data to connected device
 		protected boolean send(){
-			showToast("send data");
+			showToast("sending data");
 			if ( socket != null ){
 				try{
 					dos = new DataOutputStream(socket.getOutputStream());
@@ -273,7 +284,7 @@ public class GestureActivityCombined extends Activity implements OnGesturePerfor
 				}finally{
 					if(dos!=null){
 						try{
-							dos.close();
+							//dos.close();
 						}catch(Exception ex){
 							Log.e("Dos Close Error:", ex.getMessage());
 						}
