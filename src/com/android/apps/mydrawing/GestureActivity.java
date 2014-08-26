@@ -73,15 +73,16 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 	@Override
 	public void shakingStarted() {
 	//send signal to connected devices
+		Toast.makeText(GestureActivity.this, "shake", Toast.LENGTH_LONG).show();
 		PaintObject po = new PaintObject("shake");
 		saveAndRedraw();
-		Toast.makeText(this, "SHAKING START", Toast.LENGTH_SHORT).show();
-		//new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
+		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);		
 	}
 
+	
 	@Override
-	public void shakingStopped() {		
-		Toast.makeText(this, "SHAKING STOP", Toast.LENGTH_SHORT).show();
+	public void shakingStopped() {
+		Toast.makeText(GestureActivity.this, "redrawing", Toast.LENGTH_LONG).show();
 		saveAndRedraw();
 	}
 	

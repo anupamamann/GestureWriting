@@ -105,10 +105,11 @@ public class MultiThreadedServer implements Runnable{
 			DataOutputStream dos = null;
 
 			try {
-				input = clientSocket.getInputStream();
-				dis = new DataInputStream(input);
+				
+				//input = clientSocket.getInputStream();
+				dis = new DataInputStream(clientSocket.getInputStream());
 				while(true){
-					if(dis.available() > 0){
+					if(dis!=null && dis.available() > 0){
 						int length = dis.readInt();
 						if(length >0){
 							byte[] bArray = new byte[length];
