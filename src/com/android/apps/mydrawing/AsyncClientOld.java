@@ -9,14 +9,14 @@ import java.net.UnknownHostException;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class AsyncClient extends AsyncTask {
+public class AsyncClientOld extends AsyncTask {
 
 	String dstAddress;
 	  int dstPort;
 	  String response = "";
 	
 	  
-	 AsyncClient(String addr, int port){
+	 AsyncClientOld(String addr, int port){
 		   dstAddress = addr;
 		   dstPort = port;
 		  }
