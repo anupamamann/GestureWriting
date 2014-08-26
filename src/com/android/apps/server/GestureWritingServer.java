@@ -14,8 +14,7 @@ public class GestureWritingServer{
 	public static void main(String args[])  throws IOException,
 			ClassNotFoundException {
 		System.setProperty("java.awt.headless", "false");
-		int cTosPortNumber = 9876;
-		String str = null;
+		int cTosPortNumber = 9002;
 	
 		ServerSocket servSocket = new ServerSocket(cTosPortNumber);
 		System.out.println("Waiting for a connection on " + cTosPortNumber);
@@ -30,12 +29,13 @@ public class GestureWritingServer{
 		while(true){
 			
 			Socket fromClientSocket = servSocket.accept();
-			 dis = new DataInputStream(fromClientSocket.getInputStream());
+			dis = new DataInputStream(fromClientSocket.getInputStream());
 			try{
 				int length = dis.readInt();
 				byte[] bArray = new byte[length];
-				dis.readFully(bArray, 0, length);
+				if (length > 0)
 				System.out.println("Received Object");
+				dis.readFully(bArray, 0, length);
 				//fromClientSocket.getInputStream().read(bArray);
 				//ByteArrayInputStream bis = new ByteArrayInputStream(bArray);
 				//fromClient = new ObjectInputStream(bis);
