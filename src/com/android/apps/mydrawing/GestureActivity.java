@@ -1,43 +1,28 @@
 package com.android.apps.mydrawing;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-
-import org.apache.commons.lang.SerializationUtils;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
-import android.gesture.GestureOverlayView;
-import android.gesture.GestureOverlayView.OnGesturePerformedListener;
-import android.gesture.Prediction;
-import android.os.AsyncTask;
+import android.graphics.Paint;
+import android.graphics.Path.Direction;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
 
-public class GestureActivity extends Activity implements OnGesturePerformedListener{
+import com.android.apps.mydrawing.PaintObject.PathObject;
+
+public class GestureActivity extends Activity {
 	GestureLibrary mLibrary;
-	AsynNetworkClient tcpClient;
+	AsyncNetworkClient tcpClient;
 
-	private String serverIpAddress = "10.73.212.112";
+	private String serverIpAddress = "10.73.221.110";
 	PrintWriter out;
 	ObjectOutputStream oos;
-	//ObjectInputStream ois = null;
-	private boolean isConnected = false;
 	Context context=null;
-	DataOutputStream dos = null;
-	DataInputStream dis = null;
+	DrawingCanvas drawingBoard;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +34,11 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 		if (!mLibrary.load()) {
 			finish();
 		}
+		
+		drawingBoard = (DrawingCanvas) findViewById(R.id.drawingCanvas1);
+		drawingBoard.setActivity(this);
 
-		GestureOverlayView gestures = (GestureOverlayView) findViewById(R.id.gestures);
+		/*GestureOverlayView gestures = (GestureOverlayView) findViewById(R.id.gestures);
 		gestures.addOnGesturePerformedListener(this);
 		
 		//standard swipe gestures
@@ -75,13 +63,28 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			public void onSwipeDown() {
 				tcpClient.sendDataToDevice("key:down");
 			}
-		});
-		//start connection 
-		tcpClient = new AsynNetworkClient();
-		tcpClient.execute(serverIpAddress);
+		});   */
+	}
+	
+	public void sendDrawing(Paint paint, boolean init) {
+		if (!init) {
+			PaintObject po = new PaintObject("test", drawingBoard.getPaths());
+			// execute fresh async task
+			new AsyncNetworkClient(this, po).execute(serverIpAddress);
+		}
+	}
+	
+	public void drawReceived(PaintObject po) {
+		List<PathObject> paths = po.getPaths();
+		//temp tweak for testing
+		MySerializablePath firstPath = null;
+		firstPath = (MySerializablePath) paths.get(0).getPath();
+		firstPath.addCircle(200, 300, 10, Direction.CCW);
+		drawingBoard.addToPaths(firstPath);
+		
 	}
 
-	@Override
+	/*@Override
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
 		String cmd;
@@ -112,124 +115,17 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				//tcpClient.sendDataToDevice(cmd);
 			}
 		}
-	}
+	}*/
+	
+	/*private void showToast(final String message) {
+	    new Handler(context.getMainLooper()).post(new Runnable() {
 
-	private class AsynNetworkClient extends AsyncTask<String, Void,Boolean>{
-		Socket socket;
-		
-		@Override
-		protected void onPreExecute() {
-			Toast.makeText(GestureActivity.this,"Starting Connection", Toast.LENGTH_LONG).show();
-			super.onPreExecute();
-		}
-
-		@Override
-		protected Boolean doInBackground(String... params) {
-			try{
-				
-				InetAddress serverAddr = InetAddress.getByName(serverIpAddress);
-				Log.d("ClientActivity", "C: Connecting...");
-				socket = new Socket(serverAddr, 9876);
-				try{
-					dos = new DataOutputStream(socket.getOutputStream());
-					//out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-					//out.println("msg:Hey Server!");
-					PaintObject po = new PaintObject("testObject");
-					byte[] mArray = SerializationUtils.serialize(po);
-				//	String msg = "Hey";
-					//byte[] mArray = msg.getBytes();
-					dos.writeInt(mArray.length);
-					dos.write(mArray);
-					dos.flush();
-					
-					dis = new DataInputStream(socket.getInputStream());
-					int length = dis.readInt();
-					byte[] bArray = new byte[length];
-					if(length>0) {
-						
-					    dis.readFully(bArray, 0, bArray.length); // read the message
-					}
-					
-					
-					
-					PaintObject rcvdPO = (PaintObject)SerializationUtils.deserialize(bArray);
-					//Log.d("Received Object:" , rcvdPO.toString());
-					//String rcvdMessage = new String(bArray);
-					showToast("Received Messages:"+ rcvdPO.toString());
-					//Log.d("Received Messages:", rcvdMessage);
-					Log.d("ClientActivity", "C: Sent.");
-				
-				} catch (Exception e) {
-					Log.e("ClientActivity", "S: Error", e);
-				}
-
-			} catch (UnknownHostException e) {
-				//showToast("Don't know about host: ");
-				Log.e("", e.getMessage());
-			} catch (IOException e) {
-				//showToast("Couldn't get I/O for the connection to: ");
-				Log.e("", e.getMessage());
-			}catch (Exception e) {
-				//showToast(GestureActivity.this, "Exception: ");
-				Log.e("", e.getMessage());
-			}
-			isConnected = true;
-
-			return isConnected;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (isConnected) {
-				Toast.makeText(GestureActivity.this,"Connection successfull", Toast.LENGTH_LONG).show();
-			}        
-			super.onPostExecute(result);
-		}
-
-		
-		//method to send data to connected device
-		protected boolean sendDataToDevice(String cmd){
-
-			 if ( isConnected ) 
-				 out.println(cmd);
-			 else{
-				 Log.e("Connection:", "Connection Lost....");
-				 //Notify app, re-initiate connection
-				 
-			 }
-			return true;
-
-			
-		}
-		
-		//
-		public void disconnect()
-		{
-		    if ( isConnected )
-		    {
-		        try {
-		            out.close();
-		            socket.close();
-		            isConnected = false;
-		        } catch (IOException e) {
-		        	Toast.makeText(GestureActivity.this, "Couldn't get I/O for the connection",Toast.LENGTH_LONG).show();
-		            Log.e("Error", e.getMessage());
-		        }            
-		    }
-		}
-
-		
-		private void showToast(final String message) {
-		    new Handler(context.getMainLooper()).post(new Runnable() {
-
-		        @Override
-		        public void run() {
-		            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-		        }
-		    });
-		}
-	}
-
-
+	        @Override
+	        public void run() {
+	            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+	        }
+	    });
+	}*/
 
 }
+

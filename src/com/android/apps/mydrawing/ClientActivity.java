@@ -32,7 +32,7 @@ public class ClientActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			AsyncClient myClientTask = new AsyncClient(
+			AsyncClientOld myClientTask = new AsyncClientOld(
 					"192.168.1.12",9876);
 				     myClientTask.execute();
 				     
