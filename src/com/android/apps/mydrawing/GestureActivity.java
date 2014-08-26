@@ -81,7 +81,7 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 
 	@Override
 	public void shakingStopped() {		
-		Toast.makeText(this, "SHAKING STOP ", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "SHAKING STOP", Toast.LENGTH_SHORT).show();
 		saveAndRedraw();
 	}
 	
