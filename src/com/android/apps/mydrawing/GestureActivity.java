@@ -1,5 +1,6 @@
 package com.android.apps.mydrawing;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -74,17 +75,31 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 		PaintObject po = new PaintObject("shake");
 		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);
 		
+		
 	}
 
 	@Override
 	public void shakingStopped() {
-		
+		saveAndRedraw();
 	}
 	
 	public void saveAndRedraw(){
 		drawingBoard.clearCanvas();
 	}
 
-	
+	@Override
+	protected void onDestroy() {
+		if(this.socket!=null){
+			
+			try {
+				this.socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		super.onDestroy();
+	}
 }
 
