@@ -42,7 +42,7 @@ public class AsyncNetworkReceive extends AsyncTask<String, Void,Boolean>{
 
 			try {
 				parentActivity.setSocket(socket);
-				showToast("Waiting for a msg");
+				//showToast("Waiting for a msg");
 				dis = new DataInputStream(socket.getInputStream());
 				while (true) {
 					if (dis.available() > 0) {
@@ -53,10 +53,10 @@ public class AsyncNetworkReceive extends AsyncTask<String, Void,Boolean>{
 																		// message
 							PaintObject rcvdPO = (PaintObject) SerializationUtils
 									.deserialize(bArray);
-							showToast("Received Messages:" + rcvdPO.toString());
+							//showToast("Received Messages:" + rcvdPO.toString());
 							showOnDrawingBoard(rcvdPO);
 						} else {
-							showToast("no message");
+							//showToast("no message");
 						}
 					} else {
 						// System.out.println("listening");
@@ -77,7 +77,7 @@ public class AsyncNetworkReceive extends AsyncTask<String, Void,Boolean>{
 			// showToast(GestureActivity.this, "Exception: ");
 			Log.e("", e.getMessage());
 		} finally {
-			showToast("Came to Finally");
+			//showToast("Came to Finally");
 			try {
 				if (dis != null)
 					dis.close();
