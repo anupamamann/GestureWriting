@@ -78,6 +78,7 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 					drawingBoard.addToPaths(paths.get(0));
 				}
 			}
+			
 		}
 	}
 

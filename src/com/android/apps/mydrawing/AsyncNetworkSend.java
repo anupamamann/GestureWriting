@@ -28,27 +28,27 @@ public class AsyncNetworkSend extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected void onPreExecute() {
 		// TODO Auto-generated method stub
-		showToast("pre sending");
+		//showToast("pre sending");
 		super.onPreExecute();
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
 		// TODO Auto-generated method stub
-		showToast("post sending");
+		//showToast("post sending");
 		super.onPostExecute(result);
 	}
 
 	@Override
 	protected Boolean doInBackground(String... params) {
-		showToast("Trying to send data");
+		//showToast("Trying to send data");
 		return send();
 
 	}
 
 	// method to send data to connected device
 	protected boolean send() {
-		showToast("sending data");
+		//showToast("sending data");
 		if (socket != null) {
 			try {
 				dos = new DataOutputStream(socket.getOutputStream());
@@ -62,11 +62,11 @@ public class AsyncNetworkSend extends AsyncTask<String, Void, Boolean> {
 				dos.writeInt(mArray.length);
 				dos.write(mArray);
 				dos.flush();
-				showToast("msg sent");
+				//showToast("msg sent");
 
 			} catch (Exception ex) {
 				Log.e("Send Error:", ex.getMessage());
-				showToast("Error sending message");
+			//	showToast("Error sending message");
 			} finally {
 				if (dos != null) {
 					try {
@@ -78,7 +78,7 @@ public class AsyncNetworkSend extends AsyncTask<String, Void, Boolean> {
 			}
 		} else {
 			Log.e("Socket Error:", "Null Socket");
-			showToast("Null Socket");
+			//showToast("Null Socket");
 		}
 
 		return true;
