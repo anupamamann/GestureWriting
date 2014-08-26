@@ -73,8 +73,9 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 			} else {
 				List<PathObject> paths = po.getPaths();
 				if (paths != null) {
-					for (PathObject pathObj : paths)
-						drawingBoard.addToPaths(pathObj);
+					/*for (PathObject pathObj : paths)
+						drawingBoard.addToPaths(pathObj);*/
+					drawingBoard.addToPaths(paths.get(0));
 				}
 			}
 		}
@@ -83,7 +84,7 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 	@Override
 	public void shakingStarted() {
 	//send signal to connected devices
-		Toast.makeText(GestureActivity.this, "shake", Toast.LENGTH_LONG).show();
+		Toast.makeText(GestureActivity.this, "shake ", Toast.LENGTH_LONG).show();
 		PaintObject po = new PaintObject("shake");
 		saveAndRedraw();
 		new AsyncNetworkSend(socket, this, po).execute(serverIpAddress);		
