@@ -17,6 +17,8 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.android.apps.mydrawing.PaintObject.PathObject;
+
 public class DrawingCanvas extends View {
 	Paint paint;
 	List<Pair<MySerializablePath, Pair<Integer, Integer>>> paths;
@@ -84,8 +86,9 @@ public class DrawingCanvas extends View {
 		return bitmap;
 	}
 	
-	public void addToPaths(MySerializablePath p) {
-		paths.add(Pair.create(p, Pair.create(brushSize, color)));
+	public void addToPaths(PathObject pathObj) {
+		paths.add(Pair.create(pathObj.getPath(),
+				Pair.create(pathObj.getBrushSize(), pathObj.getColor())));
 		invalidate();
 	}
 	

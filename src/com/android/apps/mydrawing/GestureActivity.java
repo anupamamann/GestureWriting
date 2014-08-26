@@ -68,15 +68,13 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 
 	public void drawReceived(PaintObject po) {
 		if (po != null) {
-			if(po.getDescription().equalsIgnoreCase("shake")){
+			if (po.getDescription().equalsIgnoreCase("shake")) {
 				saveAndRedraw();
-			}else{
+			} else {
 				List<PathObject> paths = po.getPaths();
-				// temp tweak for testing
-				MySerializablePath firstPath = null;
-				firstPath = (MySerializablePath) paths.get(0).getPath();
-				if (firstPath != null) {
-					drawingBoard.addToPaths(firstPath);
+				if (paths != null) {
+					for (PathObject pathObj : paths)
+						drawingBoard.addToPaths(pathObj);
 				}
 			}
 		}

@@ -34,6 +34,14 @@ public class PaintObject implements Serializable {
 			return path;
 		}
 		
+		public int getBrushSize() {
+			return brushSize;
+		}
+		
+		public int getColor() {
+			return color;
+		}
+		
 	}
 
 	List<PathObject> pathO;
