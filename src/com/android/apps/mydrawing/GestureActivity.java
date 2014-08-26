@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 	PrintWriter out;
 	ObjectOutputStream oos;
 	Context context=null;
+	
 	DrawingCanvas drawingBoard;
 
 	@Override
@@ -40,8 +43,17 @@ public class GestureActivity extends Activity implements ShakeListener.Callback{
 		
 		drawingBoard = (DrawingCanvas) findViewById(R.id.drawingCanvas1);
 		drawingBoard.setActivity(this);
-
-		
+				
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	
+	public void onClear(MenuItem mi){
+		shakingStarted();
 	}
 	
 	public void setSocket(Socket socket){
